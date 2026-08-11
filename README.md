@@ -22,6 +22,7 @@ Here are some ideas to get you started:
   </picture>
 </a>
 
+## 🐍 Contribution Snake
 <picture>
   <source
     media="(prefers-color-scheme: dark)"
