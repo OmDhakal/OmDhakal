@@ -1,0 +1,29 @@
+github_username: "OmDhakal"
+username: "OmDhakal"
+hostname: "github"
+
+name: "Om Dhakal"
+birthdate: "2005-11-17"
+location: "Kathmandu, Nepal"
+
+os: "Arch Linux"
+host: "Currently Unemployed"
+kernel: "Linux"
+ide: "Neovim, Zed"
+languages_programming: "Python, C++, Java, JavaScript, Djang"
+languages_computer: "HTML, CSS, Linux, Git, MySQL, PostgreSQL, Bash, Docker, "
+languages_real: "English, Nepali, Japanese, Spanish"
+hobbies_software: "Programming, AI, Linux, Anime, Games"
+hobbies_hardware: "Computers, PC Building, Electronics"
+
+email_personal: "odhakal127@gmail.com"
+email_work: "om2082-0028@iimscollege.edu.np"
+linkedin: "https://www.linkedin.com/in/om-dhakal-82226230a/"
+discord: "apostlehunterguts"
+
+ascii_dir: "ascii"
+display_seconds: 3.5
+transition_seconds: 0.6
+svg_width: 980
+svg_height: 590
+loc_cache_file: ".loc-cache.json"

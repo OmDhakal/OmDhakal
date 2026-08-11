@@ -15,6 +15,13 @@ Here are some ideas to get you started:
 - ⚡ Fun fact: ...
 -->
 
+<a href="https://github.com/OmDhakal/OmDhakal">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/OmDhakal/OmDhakal/main/profile-dark.svg">
+    <img alt="Om Dhakal GitHub Profile Dashboard" src="https://raw.githubusercontent.com/OmDhakal/OmDhakal/main/profile-light.svg">
+  </picture>
+</a>
+
 <picture>
   <source
     media="(prefers-color-scheme: dark)"
