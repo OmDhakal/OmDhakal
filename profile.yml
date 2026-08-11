@@ -11,8 +11,9 @@ host: "Currently Unemployed"
 kernel: "Linux"
 ide: "Neovim, Zed"
 languages_programming: "Python, C++, Java, JavaScript, Django"
-languages_computer: "HTML, CSS, Linux, Git, MySQL, PostgreSQL
-                     Bash, Docker, "
+languages_computer: |-
+  HTML, CSS, Linux, Git, MySQL, PostgreSQL,
+  Bash, Docker
 languages_real: "English, Nepali, Japanese, Spanish"
 hobbies_software: "Programming, AI, Linux, Anime, Games"
 hobbies_hardware: "Computers, PC Building, Electronics"

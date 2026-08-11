@@ -340,21 +340,21 @@ def generate(config, stats, loc, arts, dark):
     y = TOP_Y
 
     def row(label_text, value, color=None):
-        nonlocal y
-        value_color = color or fg
-        parts = str(value).split("\n")
-        rows.append(
-            f'<text x="{RIGHT_X}" y="{y}">'
-            f'<tspan class="label">{esc(label_text)}: </tspan>'
-            f'<tspan fill="{value_color}" class="value">{esc(parts[0])}</tspan></text>'
-        )
-        y += LINE
-        for extra in parts[1:]:
+            nonlocal y
+            value_color = color or fg
+            parts = str(value).split("\n")
             rows.append(
-                f'<text x="{RIGHT_X + 8}" y="{y}">'
-                f'<tspan fill="{value_color}" class="value">{esc(extra)}</tspan></text>'
+                f'<text x="{RIGHT_X}" y="{y}">'
+                f'<tspan class="label">{esc(label_text)}: </tspan>'
+                f'<tspan fill="{value_color}" class="value">{esc(parts[0])}</tspan></text>'
             )
             y += LINE
+            for extra in parts[1:]:
+                rows.append(
+                    f'<text x="{RIGHT_X + 8}" y="{y}">'
+                    f'<tspan fill="{value_color}" class="value">{esc(extra)}</tspan></text>'
+                )
+                y += LINE
 
     def space():
         nonlocal y
