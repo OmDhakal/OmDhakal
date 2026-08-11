@@ -10,7 +10,7 @@ os: "Arch Linux"
 host: "Currently Unemployed"
 kernel: "Linux"
 ide: "Neovim, Zed"
-languages_programming: "Python, C++, Java, JavaScript, Djang"
+languages_programming: "Python, C++, Java, JavaScript, Django"
 languages_computer: "HTML, CSS, Linux, Git, MySQL, PostgreSQL
                      Bash, Docker, "
 languages_real: "English, Nepali, Japanese, Spanish"

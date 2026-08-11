@@ -1,11 +1,11 @@
-import os
-import json
-import random
 import hashlib
+import html
+import json
+import os
+import random
 from calendar import monthrange
 from datetime import date, datetime
 from pathlib import Path
-import html
 
 import requests
 import yaml
@@ -71,7 +71,10 @@ def github_stats(user, token):
     try:
         r = requests.post(
             GRAPHQL,
-            headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
+            headers={
+                "Authorization": f"Bearer {token}",
+                "Content-Type": "application/json",
+            },
             json={"query": query, "variables": {"login": user}},
             timeout=30,
         )
@@ -83,7 +86,8 @@ def github_stats(user, token):
             "repos": repos["totalCount"],
             "stars": sum(x["stargazerCount"] for x in repos["nodes"]),
             "followers": u["followers"]["totalCount"],
-            "commits": cc["totalCommitContributions"] + cc["restrictedContributionsCount"],
+            "commits": cc["totalCommitContributions"]
+            + cc["restrictedContributionsCount"],
             "contributions": cc["contributionCalendar"]["totalContributions"],
         }
     except Exception as e:
@@ -99,9 +103,16 @@ def loc_stats(user, token, cache_name):
         cache = {}
 
     if not token:
-        return cache.get("total", 0), cache.get("additions", 0), cache.get("deletions", 0)
+        return (
+            cache.get("total", 0),
+            cache.get("additions", 0),
+            cache.get("deletions", 0),
+        )
 
-    headers = {"Authorization": f"Bearer {token}", "Accept": "application/vnd.github+json"}
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Accept": "application/vnd.github+json",
+    }
     try:
         repos = []
         page = 1
@@ -152,18 +163,24 @@ def loc_stats(user, token, cache_name):
                 continue
 
         total = add_total + del_total
-        cache.update({
-            "total": total,
-            "additions": add_total,
-            "deletions": del_total,
-            "repos": old,
-            "updated": datetime.now().isoformat(),
-        })
+        cache.update(
+            {
+                "total": total,
+                "additions": add_total,
+                "deletions": del_total,
+                "repos": old,
+                "updated": datetime.now().isoformat(),
+            }
+        )
         path.write_text(json.dumps(cache, indent=2))
         return total, add_total, del_total
     except Exception as e:
         print("LOC warning:", e)
-        return cache.get("total", 0), cache.get("additions", 0), cache.get("deletions", 0)
+        return (
+            cache.get("total", 0),
+            cache.get("additions", 0),
+            cache.get("deletions", 0),
+        )
 
 
 def load_art(folder):
@@ -186,15 +203,22 @@ def load_art(folder):
             ratio = width / ART_W
             scaled = []
             for line in lines:
-                scaled.append("".join(
-                    line[min(int(i * ratio), max(0, len(line) - 1))] if line else " "
-                    for i in range(ART_W)
-                ))
-            lines = scaled
+                new_line = []
+                for i in range(ART_W):
+                    src = int(i * ratio)
+                    src2 = min(src + 1, len(line) - 1) if src + 1 < len(line) else src
+                    if src < len(line) and line[src] != " ":
+                        new_line.append(line[src])
+                    elif src2 < len(line) and line[src2] != " ":
+                        new_line.append(line[src2])
+                    else:
+                        new_line.append(" ")
+                        scaled.append("".join(new_line))
+                        lines = scaled
 
         if len(lines) > ART_H:
             start = (len(lines) - ART_H) // 2
-            lines = lines[start:start + ART_H]
+            lines = lines[start : start + ART_H]
 
         content_w = max((len(x) for x in lines), default=0)
         left = max(0, (ART_W - content_w) // 2)
@@ -209,8 +233,13 @@ def load_art(folder):
 def morph(src, dst, seed):
     rng = random.Random(hashlib.md5(seed.encode()).hexdigest())
     frames = []
-    for ratio, prefer_src in [(0.4, True), (0.75, True), (0.95, True),
-                              (0.75, False), (0.4, False)]:
+    for ratio, prefer_src in [
+        (0.4, True),
+        (0.75, True),
+        (0.95, True),
+        (0.75, False),
+        (0.4, False),
+    ]:
         frame = []
         for y in range(ART_H):
             a = src[y] if y < len(src) else " " * ART_W
@@ -269,8 +298,8 @@ def generate(config, stats, loc, arts, dark):
         stop = start + display
         p0, p1 = start / cycle * 100, stop / cycle * 100
         css.append(
-            f"@keyframes art{i}{{0%,{max(0,p0-.4):.2f}%{{opacity:0}}"
-            f"{p0:.2f}%,{p1:.2f}%{{opacity:1}}{min(100,p1+.8):.2f}%,100%{{opacity:0}}}}"
+            f"@keyframes art{i}{{0%,{max(0, p0 - 0.4):.2f}%{{opacity:0}}"
+            f"{p0:.2f}%,{p1:.2f}%{{opacity:1}}{min(100, p1 + 0.8):.2f}%,100%{{opacity:0}}}}"
             f".art{i}{{animation:art{i} {cycle}s ease infinite}}"
         )
 
@@ -283,15 +312,19 @@ def generate(config, stats, loc, arts, dark):
         art_nodes.append(f'<g class="art{i}">{text}</g>')
 
     for i in range(count):
-        frames = morph(arts[i][1], arts[(i + 1) % count][1], f"{arts[i][0]}-{arts[(i + 1) % count][0]}")
+        frames = morph(
+            arts[i][1],
+            arts[(i + 1) % count][1],
+            f"{arts[i][0]}-{arts[(i + 1) % count][0]}",
+        )
         start = i * phase + display
         frame_time = transition / 5
         for j, frame in enumerate(frames):
             t0, t1 = start + j * frame_time, start + (j + 1) * frame_time
             p0, p1 = t0 / cycle * 100, t1 / cycle * 100
             css.append(
-                f"@keyframes morph{i}_{j}{{0%,{max(0,p0-.2):.2f}%{{opacity:0}}"
-                f"{p0:.2f}%,{p1:.2f}%{{opacity:1}}{min(100,p1+.2):.2f}%,100%{{opacity:0}}}}"
+                f"@keyframes morph{i}_{j}{{0%,{max(0, p0 - 0.2):.2f}%{{opacity:0}}"
+                f"{p0:.2f}%,{p1:.2f}%{{opacity:1}}{min(100, p1 + 0.2):.2f}%,100%{{opacity:0}}}}"
                 f".morph{i}_{j}{{animation:morph{i}_{j} {cycle}s steps(1) infinite}}"
             )
             text = "".join(
@@ -302,19 +335,26 @@ def generate(config, stats, loc, arts, dark):
 
     stats = stats or {}
     total, additions, deletions = loc
-    title_text = f'{config["username"]}@{config["hostname"]}'
+    title_text = f"{config['username']}@{config['hostname']}"
     rows = []
     y = TOP_Y
 
     def row(label_text, value, color=None):
         nonlocal y
         value_color = color or fg
+        parts = str(value).split("\n")
         rows.append(
             f'<text x="{RIGHT_X}" y="{y}">'
             f'<tspan class="label">{esc(label_text)}: </tspan>'
-            f'<tspan fill="{value_color}" class="value">{esc(value)}</tspan></text>'
+            f'<tspan fill="{value_color}" class="value">{esc(parts[0])}</tspan></text>'
         )
         y += LINE
+        for extra in parts[1:]:
+            rows.append(
+                f'<text x="{RIGHT_X + 8}" y="{y}">'
+                f'<tspan fill="{value_color}" class="value">{esc(extra)}</tspan></text>'
+            )
+            y += LINE
 
     def space():
         nonlocal y
@@ -322,7 +362,9 @@ def generate(config, stats, loc, arts, dark):
 
     rows.append(f'<text x="{RIGHT_X}" y="{y}" class="title">{esc(title_text)}</text>')
     y += LINE
-    rows.append(f'<text x="{RIGHT_X}" y="{y}" class="dim">{"─" * len(title_text)}</text>')
+    rows.append(
+        f'<text x="{RIGHT_X}" y="{y}" class="dim">{"─" * len(title_text)}</text>'
+    )
     y += LINE + 10
 
     row("OS", config.get("os", ""))
@@ -380,10 +422,10 @@ text{{font-family:'JetBrains Mono','Fira Code','Cascadia Code','SF Mono',monospa
 {css_text}
 @keyframes cursor{{50%{{opacity:0}}}}.cursor{{animation:cursor 1s step-end infinite}}
 </style>
-<rect class="bg" x=".5" y=".5" width="{width-1}" height="{height-1}"/>
-<line x1="395" y1="14" x2="395" y2="{height-14}" stroke="{border}" stroke-width="1" stroke-dasharray="4,4" opacity=".5"/>
-<g id="ascii">{''.join(art_nodes)}</g>
-<g id="info">{''.join(rows)}</g>
+<rect class="bg" x=".5" y=".5" width="{width - 1}" height="{height - 1}"/>
+<line x1="395" y1="14" x2="395" y2="{height - 14}" stroke="{border}" stroke-width="1" stroke-dasharray="4,4" opacity=".5"/>
+<g id="ascii">{"".join(art_nodes)}</g>
+<g id="info">{"".join(rows)}</g>
 <text x="{RIGHT_X + len(title_text) * 8.4 + 4}" y="{TOP_Y}" class="title cursor">_</text>
 </svg>"""
 
@@ -406,7 +448,9 @@ def main():
         raise SystemExit("No ASCII art files found in ascii/")
 
     for dark, filename in ((True, "profile-dark.svg"), (False, "profile-light.svg")):
-        (ROOT / filename).write_text(generate(config, stats, loc, arts, dark), encoding="utf-8")
+        (ROOT / filename).write_text(
+            generate(config, stats, loc, arts, dark), encoding="utf-8"
+        )
         print(f"generated {filename}")
 
 
