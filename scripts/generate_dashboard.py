@@ -339,22 +339,29 @@ def generate(config, stats, loc, arts, dark):
     rows = []
     y = TOP_Y
 
-    def row(label_text, value, color=None):
-            nonlocal y
-            value_color = color or fg
-            parts = str(value).split("\n")
+    def row(label_text, value, color=None, link=None):
+        nonlocal y
+        value_color = color or fg
+        parts = str(value).split("\n")
+        label_prefix = f"{label_text}: "
+        value_x = RIGHT_X + len(label_prefix) * 8.4
+
+        first_line = (
+            f'<text x="{RIGHT_X}" y="{y}">'
+            f'<tspan class="label">{esc(label_text)}: </tspan>'
+            f'<tspan fill="{value_color}" class="value">{esc(parts[0])}</tspan></text>'
+        )
+        if link:
+            first_line = f'<a href="{esc(link)}" target="_blank">{first_line}</a>'
+        rows.append(first_line)
+        y += LINE
+
+        for extra in parts[1:]:
             rows.append(
-                f'<text x="{RIGHT_X}" y="{y}">'
-                f'<tspan class="label">{esc(label_text)}: </tspan>'
-                f'<tspan fill="{value_color}" class="value">{esc(parts[0])}</tspan></text>'
+                f'<text x="{value_x:.1f}" y="{y}">'
+                f'<tspan fill="{value_color}" class="value">{esc(extra)}</tspan></text>'
             )
             y += LINE
-            for extra in parts[1:]:
-                rows.append(
-                    f'<text x="{RIGHT_X + 8}" y="{y}">'
-                    f'<tspan fill="{value_color}" class="value">{esc(extra)}</tspan></text>'
-                )
-                y += LINE
 
     def space():
         nonlocal y
@@ -387,8 +394,8 @@ def generate(config, stats, loc, arts, dark):
     y += LINE
     row("Email.Personal", config.get("email_personal", ""))
     row("Email.Work", config.get("email_work", ""))
-    row("LinkedIn", config.get("linkedin", ""))
-    row("Discord", config.get("discord", ""))
+    row("LinkedIn", config.get("linkedin", ""), link=config.get("linkedin_url", ""))
+    row("X", config.get("X", ""), link=config.get("x_url", ""))
     space()
 
     rows.append(f'<text x="{RIGHT_X}" y="{y}" class="section">- GitHub Stats</text>')

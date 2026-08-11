@@ -20,12 +20,14 @@ hobbies_hardware: "Computers, PC Building, Electronics"
 
 email_personal: "odhakal127@gmail.com"
 email_work: "om2082-0028@iimscollege.edu.np"
-linkedin: "https://www.linkedin.com/in/om-dhakal-82226230a/"
-discord: "apostlehunterguts"
+linkedin: "om-dhakal"
+X: "OmDhakal17"
 
 ascii_dir: "ascii"
 display_seconds: 3.5
 transition_seconds: 0.6
 svg_width: 980
+x_url: "https://x.com/OmDhakal17"
+linkedin_url: "https://www.linkedin.com/in/om-dhakal/"
 svg_height: 590
 loc_cache_file: ".loc-cache.json"
