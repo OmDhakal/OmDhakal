@@ -401,9 +401,9 @@ def main():
         stats = json.loads(stats_cache.read_text())
 
     loc = loc_stats(user, token, config.get("loc_cache_file", ".loc-cache.json"))
-    arts = load_art(config.get("aircraft_dir", "aircraft"))
+    arts = load_art(config.get("ascii_dir", "ascii"))
     if not arts:
-        raise SystemExit("No ASCII art files found in aircraft/")
+        raise SystemExit("No ASCII art files found in ascii/")
 
     for dark, filename in ((True, "profile-dark.svg"), (False, "profile-light.svg")):
         (ROOT / filename).write_text(generate(config, stats, loc, arts, dark), encoding="utf-8")
